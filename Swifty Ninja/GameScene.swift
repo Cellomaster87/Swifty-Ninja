@@ -7,83 +7,71 @@
 //
 
 import SpriteKit
-import GameplayKit
 
 class GameScene: SKScene {
+    // MARK: - Properties
+    var gameScore: SKLabelNode!
     
-    private var label : SKLabelNode?
-    private var spinnyNode : SKShapeNode?
+    var score = 0 {
+        didSet {
+            gameScore.text = "Score: \(score)"
+        }
+    }
     
+    var livesImages = [SKSpriteNode]()
+    var lives = 3
+    
+    var activeSliceBG: SKShapeNode!
+    var activeSliceFG: SKShapeNode!
+    
+    // MARK: - Scene management
     override func didMove(to view: SKView) {
+        let background = SKSpriteNode(imageNamed: "sliceBackground")
+        background.position = CGPoint(x: 512, y: 384)
+        background.blendMode = .replace // no alpha
+        background.zPosition = -1
+        addChild(background)
         
-        // Get label node from scene and store it for use later
-        self.label = self.childNode(withName: "//helloLabel") as? SKLabelNode
-        if let label = self.label {
-            label.alpha = 0.0
-            label.run(SKAction.fadeIn(withDuration: 2.0))
-        }
+        physicsWorld.gravity = CGVector(dx: 0, dy: -6) // check this (less than the Earth default which is -9.81)
+        physicsWorld.speed = 0.85 // everything happens at a slightly slower rate
         
-        // Create shape node to use during mouse interaction
-        let w = (self.size.width + self.size.height) * 0.05
-        self.spinnyNode = SKShapeNode.init(rectOf: CGSize.init(width: w, height: w), cornerRadius: w * 0.3)
+        createScore()
+        createLives()
+        createSlices()
+    }
+    
+    // MARK: - Methods
+    func createScore() {
+        gameScore = SKLabelNode(fontNamed: "Chalkduster")
+        gameScore.horizontalAlignmentMode = .left
+        gameScore.fontSize = 48
+        addChild(gameScore)
         
-        if let spinnyNode = self.spinnyNode {
-            spinnyNode.lineWidth = 2.5
+        gameScore.position = CGPoint(x: 8, y: 8)
+        score = 0
+    }
+    
+    func createLives() {
+        for i in 0 ..< 3 {
+            let spriteNode = SKSpriteNode(imageNamed: "sliceLife")
+            spriteNode.position = CGPoint(x: CGFloat(834 + (i * 70)), y: 720)
+            addChild(spriteNode)
             
-            spinnyNode.run(SKAction.repeatForever(SKAction.rotate(byAngle: CGFloat(Double.pi), duration: 1)))
-            spinnyNode.run(SKAction.sequence([SKAction.wait(forDuration: 0.5),
-                                              SKAction.fadeOut(withDuration: 0.5),
-                                              SKAction.removeFromParent()]))
+            livesImages.append(spriteNode)
         }
     }
     
-    
-    func touchDown(atPoint pos : CGPoint) {
-        if let n = self.spinnyNode?.copy() as! SKShapeNode? {
-            n.position = pos
-            n.strokeColor = SKColor.green
-            self.addChild(n)
-        }
-    }
-    
-    func touchMoved(toPoint pos : CGPoint) {
-        if let n = self.spinnyNode?.copy() as! SKShapeNode? {
-            n.position = pos
-            n.strokeColor = SKColor.blue
-            self.addChild(n)
-        }
-    }
-    
-    func touchUp(atPoint pos : CGPoint) {
-        if let n = self.spinnyNode?.copy() as! SKShapeNode? {
-            n.position = pos
-            n.strokeColor = SKColor.red
-            self.addChild(n)
-        }
-    }
-    
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        if let label = self.label {
-            label.run(SKAction.init(named: "Pulse")!, withKey: "fadeInOut")
-        }
+    func createSlices() {
+        activeSliceBG = SKShapeNode()
+        activeSliceBG.zPosition = 2
+        activeSliceBG.strokeColor = UIColor(red: 1, green: 0.9, blue: 0, alpha: 1)
+        activeSliceBG.lineWidth = 9
+        addChild(activeSliceBG)
         
-        for t in touches { self.touchDown(atPoint: t.location(in: self)) }
-    }
-    
-    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        for t in touches { self.touchMoved(toPoint: t.location(in: self)) }
-    }
-    
-    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        for t in touches { self.touchUp(atPoint: t.location(in: self)) }
-    }
-    
-    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
-        for t in touches { self.touchUp(atPoint: t.location(in: self)) }
-    }
-    
-    
-    override func update(_ currentTime: TimeInterval) {
-        // Called before each frame is rendered
+        activeSliceFG = SKShapeNode()
+        activeSliceFG.zPosition = 3
+        activeSliceFG.strokeColor = UIColor.white
+        activeSliceFG.lineWidth = 5
+        addChild(activeSliceFG)
     }
 }
