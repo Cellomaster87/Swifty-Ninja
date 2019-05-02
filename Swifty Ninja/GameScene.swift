@@ -78,8 +78,19 @@ class GameScene: SKScene {
             // 2. if any enemy is at or lower than Y position -140, we remove it from the game and our activeEnemies array
             for (index, node) in activeEnemies.enumerated().reversed() {
                 if node.position.y < -140 {
-                    node.removeFromParent()
-                    activeEnemies.remove(at: index)
+                    node.removeAllActions()
+                    
+                    if node.name == "enemy" {
+                        node.name = ""
+                        subtractLife()
+                        
+                        node.removeFromParent()
+                        activeEnemies.remove(at: index)
+                    } else if node.name == "bombContainer" {
+                        node.name = ""
+                        node.removeFromParent()
+                        activeEnemies.remove(at: index)
+                    }
                 }
             }
         } else {
@@ -141,6 +152,76 @@ class GameScene: SKScene {
         
         if !isSwooshSoundActive {
             playSwooshSound()
+        }
+        
+        let nodesAtPoint = nodes(at: location)
+        
+        for case let node as SKSpriteNode in nodesAtPoint {
+            if node.name == "enemy" {
+                // DESTROY PENGUIN CODE
+                // 1. create a particle effect over the penguin
+                if let emitter = SKEmitterNode(fileNamed: "sliceHitEnemy") {
+                    emitter.position = node.position
+                    addChild(emitter)
+                }
+                
+                // 2. clear its node name so that it can't be swiped repeatedly
+                node.name = ""
+                
+                // 3. disable the isDynamic of its physics body so that it doesn't carry on falling
+                node.physicsBody?.isDynamic = false
+                
+                // 4. make the penguin scale out and fade out at the same time
+                let scaleOut = SKAction.scale(to: 0.001, duration: 0.2)
+                let fadeOut = SKAction.fadeOut(withDuration: 0.2)
+                let group = SKAction.group([scaleOut, fadeOut])
+                
+                // 5. remove it from the scene
+                let sequence = SKAction.sequence([group, .removeFromParent()])
+                node.run(sequence)
+                
+                // 6. add 1 to the player's score
+                score += 1
+                
+                // 7. remove the enemy from the active enemies array
+                if let index = activeEnemies.firstIndex(of: node) {
+                    activeEnemies.remove(at: index)
+                }
+                
+                // 8. play a sound so the player knows they hit the penguin
+                run(SKAction.playSoundFileNamed("whack.caf", waitForCompletion: false))
+            } else if node.name == "bomb" {
+                // DESTROY BOMB CODE
+                // 1. reference the node's parent when looking up our position
+                guard let bombContainer = node.parent as? SKSpriteNode else { continue }
+                
+                 // 2. create a different particle effect
+                if let emitter = SKEmitterNode(fileNamed: "sliceHitBomb") {
+                    emitter.position = bombContainer.position
+                    addChild(emitter)
+                }
+                
+                // 3. change its physics body
+                node.name = ""
+                bombContainer.physicsBody?.isDynamic = false
+                
+                // 4. remove the note from the scene
+                let scaleOut = SKAction.scale(to: 0.001, duration: 0.2)
+                let fadeOut = SKAction.fadeOut(withDuration: 0.2)
+                let group = SKAction.group([scaleOut, fadeOut])
+                
+                let sequence = SKAction.sequence([group, .removeFromParent()])
+                bombContainer.run(sequence)
+                
+                // 5. remove the node from the active enemies array
+                if let index = activeEnemies.firstIndex(of: bombContainer) {
+                    activeEnemies.remove(at: index)
+                }
+                
+                // 6. make the game end!
+                run(SKAction.playSoundFileNamed("explosion.caf", waitForCompletion: false))
+                endGame(triggeredByBomb: true)
+            }
         }
     }
     
@@ -365,5 +446,13 @@ class GameScene: SKScene {
         
         sequencePosition += 1
         nextSequenceQueued = false
+    }
+    
+    func endGame() {
+        
+    }
+    
+    func subtractLife() {
+        
     }
 }
