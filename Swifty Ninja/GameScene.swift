@@ -82,7 +82,7 @@ class GameScene: SKScene {
                 if node.position.y < -140 {
                     node.removeAllActions()
                     
-                    if node.name == "enemy" {
+                    if node.name == "enemy" || node.name == "bonusEnemy" {
                         node.name = ""
                         subtractLife()
                         
@@ -194,6 +194,33 @@ class GameScene: SKScene {
                 
                 // 8. play a sound so the player knows they hit the penguin
                 run(SKAction.playSoundFileNamed("whack.caf", waitForCompletion: false))
+            } else if node.name == "bonusEnemy" {
+                if let emitter = SKEmitterNode(fileNamed: "explode") {
+                    emitter.position = node.position
+                    addChild(emitter)
+                }
+                
+                node.name = ""
+                node.physicsBody?.isDynamic = false
+                
+                let scaleOut = SKAction.scale(to: 0.001, duration: 0.3) // slower than the rest
+                let fadeOut = SKAction.fadeOut(withDuration: 0.3) // slower
+                let group = SKAction.group([scaleOut, fadeOut])
+                let sequence = SKAction.sequence([group, .removeFromParent()])
+                node.run(sequence)
+                
+                score += 5
+                
+                let scaleUp = SKAction.scale(to: 1.5, duration: 0.5)
+                let scaleDown = SKAction.scale(to: 1.0, duration: 0.5)
+                let scaleSequence = SKAction.sequence([scaleUp, scaleDown])
+                gameScore.run(scaleSequence)
+                
+                if let index = activeEnemies.firstIndex(of: node) {
+                    activeEnemies.remove(at: index)
+                }
+                
+                run(SKAction.playSoundFileNamed("explosion.wav", waitForCompletion: false))
             } else if node.name == "bomb" {
                 // DESTROY BOMB CODE
                 // 1. reference the node's parent when looking up our position
@@ -312,7 +339,7 @@ class GameScene: SKScene {
     func createEnemy(forceBomb: ForceBomb = .random) {
         let enemy: SKSpriteNode
         
-        var enemyType = Int.random(in: 0...6)
+        var enemyType = Int.random(in: 0...7)
         
         if forceBomb == .never {
             enemyType = 1
@@ -351,6 +378,10 @@ class GameScene: SKScene {
                 emitter.position = CGPoint(x: 76, y: 64)
                 enemy.addChild(emitter)
             }
+        } else if enemyType == 2 {
+            enemy = SKSpriteNode(imageNamed: "tv")
+            run(SKAction.playSoundFileNamed("launch.caf", waitForCompletion: false)) // changeable
+            enemy.name = "bonusEnemy"
         } else {
             enemy = SKSpriteNode(imageNamed: "penguin")
             run(SKAction.playSoundFileNamed("launch.caf", waitForCompletion: false))
@@ -378,7 +409,12 @@ class GameScene: SKScene {
         }
         
         // 4. create a random Y velocity just to make things fly at differend speeds
-        let randomYVelocity = Int.random(in: 24...32)
+        let randomYVelocity: Int
+        if enemy.name == "bonusEnemy" {
+            randomYVelocity = Int.random(in: 33...40)
+        } else {
+            randomYVelocity = Int.random(in: 24...32)
+        }
         
         // 5. give all enemies a circular physics body where the `collisionBitMask` is set to 0 so they don't collide
         enemy.physicsBody = SKPhysicsBody(circleOfRadius: 64)
@@ -470,6 +506,13 @@ class GameScene: SKScene {
             livesImages[2].texture = SKTexture(imageNamed: "sliceLifeGone")
         }
         
+        let gameOver = SKSpriteNode(imageNamed: "gameOver")
+        gameOver.position = CGPoint(x: 512, y: 384)
+        gameOver.zPosition = 1
+        gameOver.alpha = 0
+        gameOver.run(SKAction.fadeIn(withDuration: 1.5))
+        
+        addChild(gameOver)
     }
     
     func subtractLife() {

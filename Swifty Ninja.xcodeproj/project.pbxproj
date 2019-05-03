@@ -25,6 +25,8 @@
 		2D94DEB62279BB4F0073A4E7 /* sliceBombFuse.caf in Resources */ = {isa = PBXBuildFile; fileRef = 2D94DEAB2279BB4E0073A4E7 /* sliceBombFuse.caf */; };
 		2D94DEB72279BB4F0073A4E7 /* sliceHitEnemy.sks in Resources */ = {isa = PBXBuildFile; fileRef = 2D94DEAC2279BB4E0073A4E7 /* sliceHitEnemy.sks */; };
 		2D94DEB82279BB4F0073A4E7 /* launch.caf in Resources */ = {isa = PBXBuildFile; fileRef = 2D94DEAD2279BB4F0073A4E7 /* launch.caf */; };
+		2D94DEDA227C3E780073A4E7 /* explode.sks in Resources */ = {isa = PBXBuildFile; fileRef = 2D94DED9227C3E770073A4E7 /* explode.sks */; };
+		2D94DEDC227C400B0073A4E7 /* explosion.wav in Resources */ = {isa = PBXBuildFile; fileRef = 2D94DEDB227C400B0073A4E7 /* explosion.wav */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -48,6 +50,8 @@
 		2D94DEAB2279BB4E0073A4E7 /* sliceBombFuse.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = sliceBombFuse.caf; sourceTree = "<group>"; };
 		2D94DEAC2279BB4E0073A4E7 /* sliceHitEnemy.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = sliceHitEnemy.sks; sourceTree = "<group>"; };
 		2D94DEAD2279BB4F0073A4E7 /* launch.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = launch.caf; sourceTree = "<group>"; };
+		2D94DED9227C3E770073A4E7 /* explode.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = explode.sks; sourceTree = "<group>"; };
+		2D94DEDB227C400B0073A4E7 /* explosion.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = explosion.wav; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -89,8 +93,10 @@
 				2D94DE9A2279BAF10073A4E7 /* LaunchScreen.storyboard */,
 				2D94DE9D2279BAF10073A4E7 /* Info.plist */,
 				2D94DEA72279BB4E0073A4E7 /* explosion.caf */,
+				2D94DEDB227C400B0073A4E7 /* explosion.wav */,
 				2D94DEAD2279BB4F0073A4E7 /* launch.caf */,
 				2D94DEAB2279BB4E0073A4E7 /* sliceBombFuse.caf */,
+				2D94DED9227C3E770073A4E7 /* explode.sks */,
 				2D94DEA82279BB4E0073A4E7 /* sliceFuse.sks */,
 				2D94DEA52279BB4E0073A4E7 /* sliceHitBomb.sks */,
 				2D94DEAC2279BB4E0073A4E7 /* sliceHitEnemy.sks */,
@@ -168,10 +174,12 @@
 				2D94DEB42279BB4F0073A4E7 /* swoosh2.caf in Resources */,
 				2D94DEAE2279BB4F0073A4E7 /* whack.caf in Resources */,
 				2D94DEB62279BB4F0073A4E7 /* sliceBombFuse.caf in Resources */,
+				2D94DEDC227C400B0073A4E7 /* explosion.wav in Resources */,
 				2D94DE8E2279BAF00073A4E7 /* GameScene.sks in Resources */,
 				2D94DEB52279BB4F0073A4E7 /* swoosh3.caf in Resources */,
 				2D94DE992279BAF10073A4E7 /* Assets.xcassets in Resources */,
 				2D94DEB02279BB4F0073A4E7 /* sliceHitBomb.sks in Resources */,
+				2D94DEDA227C3E780073A4E7 /* explode.sks in Resources */,
 				2D94DEAF2279BB4F0073A4E7 /* wrong.caf in Resources */,
 				2D94DEB32279BB4F0073A4E7 /* sliceFuse.sks in Resources */,
 				2D94DE9C2279BAF10073A4E7 /* LaunchScreen.storyboard in Resources */,
