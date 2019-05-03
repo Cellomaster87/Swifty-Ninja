@@ -46,6 +46,20 @@ class GameScene: SKScene {
     
     var isGameEnded = false
     
+    // Create enemy magic numbers
+    let minCreationX = 64
+    let maxCreationX = 960
+    let creationY = -128
+    let minAngularVelocity: CGFloat = -3
+    let maxAngularVelocity: CGFloat = 3
+    let minFastXVelocity = 8
+    let maxFastXVelocity = 15
+    let minSlowXVelocity = 3
+    let maxSlowXVelocity = 5
+    let minYVelocity = 24
+    let maxYVelocity = 32
+    let physicsVelocityMultiplier = 40
+    
     // MARK: - Scene management
     override func didMove(to view: SKView) {
         let background = SKSpriteNode(imageNamed: "sliceBackground")
@@ -359,30 +373,30 @@ class GameScene: SKScene {
         
         // POSITION CODE
         // 1. give the enemy a random position off the bottom edge of the screen
-        let randomPosition = CGPoint(x: Int.random(in: 64...960), y: -128)
+        let randomPosition = CGPoint(x: Int.random(in: minCreationX...maxCreationX), y: creationY)
         enemy.position = randomPosition
         
         // 2. create a random angular velocity, which is how fast something should spin.
-        let randomAngularVelocity = CGFloat.random(in: -3...3)
+        let randomAngularVelocity = CGFloat.random(in: minAngularVelocity...maxAngularVelocity)
         let randomXVelocity: Int
         
         // 3. create a random X velocity (how far to move horizontally) that takes into account the enemy's position
         if randomPosition.x < 256 {
-            randomXVelocity = Int.random(in: 8...15)
+            randomXVelocity = Int.random(in: minFastXVelocity...maxFastXVelocity)
         } else if randomPosition.x < 512 {
-            randomXVelocity = Int.random(in: 3...5)
+            randomXVelocity = Int.random(in: minSlowXVelocity...maxSlowXVelocity)
         } else if randomPosition.x < 768 {
-            randomXVelocity = -Int.random(in: 3...5)
+            randomXVelocity = -Int.random(in: minSlowXVelocity...maxSlowXVelocity)
         } else {
-            randomXVelocity = -Int.random(in: 8...15)
+            randomXVelocity = -Int.random(in: minFastXVelocity...maxFastXVelocity)
         }
         
         // 4. create a random Y velocity just to make things fly at differend speeds
-        let randomYVelocity = Int.random(in: 24...32)
+        let randomYVelocity = Int.random(in: minYVelocity...maxYVelocity)
         
         // 5. give all enemies a circular physics body where the `collisionBitMask` is set to 0 so they don't collide
         enemy.physicsBody = SKPhysicsBody(circleOfRadius: 64)
-        enemy.physicsBody?.velocity = CGVector(dx: randomXVelocity * 40, dy: randomYVelocity * 40)
+        enemy.physicsBody?.velocity = CGVector(dx: randomXVelocity * physicsVelocityMultiplier, dy: randomYVelocity * physicsVelocityMultiplier)
         enemy.physicsBody?.angularVelocity = randomAngularVelocity
         enemy.physicsBody?.collisionBitMask = 0 // bounce against nothing in the game
         
